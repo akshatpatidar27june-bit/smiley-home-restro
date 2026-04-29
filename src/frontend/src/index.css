@@ -1,0 +1,164 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: "Playfair Display";
+    --font-body: "Lato";
+    --font-mono: monospace;
+    --radius: 0.75rem;
+
+    /* Lavender body background */
+    --background: 0.94 0.04 295;
+    --foreground: 0.2 0.03 270;
+
+    /* White cards */
+    --card: 1 0 0;
+    --card-foreground: 0.2 0.03 270;
+    --popover: 1 0 0;
+    --popover-foreground: 0.2 0.03 270;
+
+    /* Dark forest green primary */
+    --primary: 0.32 0.09 155;
+    --primary-foreground: 1 0 0;
+
+    /* Medium green secondary */
+    --secondary: 0.45 0.1 155;
+    --secondary-foreground: 1 0 0;
+
+    /* Soft lavender muted */
+    --muted: 0.9 0.04 295;
+    --muted-foreground: 0.5 0.03 270;
+
+    /* Accent — warm green */
+    --accent: 0.55 0.12 155;
+    --accent-foreground: 1 0 0;
+
+    --destructive: 0.55 0.22 25;
+    --destructive-foreground: 1 0 0;
+
+    --border: 0.88 0.03 295;
+    --input: 0.92 0.03 295;
+    --ring: 0.32 0.09 155;
+
+    --chart-1: 0.32 0.09 155;
+    --chart-2: 0.45 0.1 155;
+    --chart-3: 0.55 0.12 155;
+    --chart-4: 0.68 0.14 155;
+    --chart-5: 0.25 0.07 155;
+
+    --sidebar: 0.94 0.04 295;
+    --sidebar-foreground: 0.2 0.03 270;
+    --sidebar-primary: 0.32 0.09 155;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.45 0.1 155;
+    --sidebar-accent-foreground: 1 0 0;
+    --sidebar-border: 0.88 0.03 295;
+    --sidebar-ring: 0.32 0.09 155;
+  }
+
+  * {
+    @apply border-border;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .shadow-green {
+    box-shadow: 0 4px 16px rgba(27, 67, 50, 0.12);
+  }
+
+  .shadow-green-lg {
+    box-shadow: 0 8px 32px rgba(27, 67, 50, 0.18);
+  }
+
+  .shadow-card {
+    box-shadow: 0 2px 12px rgba(100, 80, 160, 0.08);
+  }
+
+  .bg-navbar {
+    background-color: #1b4332;
+  }
+
+  .bg-footer {
+    background-color: #1b4332;
+  }
+
+  .hero-overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(27, 67, 50, 0.55) 0%,
+      rgba(27, 67, 50, 0.3) 50%,
+      rgba(0, 0, 0, 0.5) 100%
+    );
+  }
+
+  /* ── 3D CARD EFFECTS ──────────────────────────────────────── */
+  .card-3d-wrapper {
+    perspective: 1000px;
+  }
+
+  .card-3d {
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow
+      0.35s ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .card-3d:hover {
+    transform: translateY(-12px) scale(1.04) rotateX(4deg);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18), 0 10px 24px
+      rgba(27, 67, 50, 0.18);
+  }
+
+  .card-3d-light:hover {
+    transform: translateY(-8px) scale(1.03) rotateX(3deg);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.13), 0 6px 16px
+      rgba(27, 67, 50, 0.12);
+  }
+}
+
+/* ── KEYFRAME ANIMATIONS ──────────────────────────────────── */
+@keyframes waPulse {
+  0%,
+  100% {
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2),
+      0 0 0 0 rgba(37, 211, 102, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5), 0 2px 8px rgba(0, 0, 0, 0.2),
+      0 0 0 12px rgba(37, 211, 102, 0);
+    transform: scale(1.05);
+  }
+}
+
+.whatsapp-fab:hover {
+  transform: scale(1.15) !important;
+  animation: none !important;
+  box-shadow: 0 8px 28px rgba(37, 211, 102, 0.6), 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
