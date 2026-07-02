@@ -6764,7 +6764,7 @@ function mergeLoginOptions(loginOptions, otherLoginOptions) {
   };
 }
 const ONE_HOUR_IN_NANOSECONDS = BigInt(36e11);
-const DEFAULT_IDENTITY_PROVIDER = "https://id.ai";
+const DEFAULT_IDENTITY_PROVIDER = "https://id.ai/authorize";
 const InternetIdentityReactContext = reactExports.createContext(void 0);
 async function createAuthClient(createOptions) {
   const config = await loadConfig();
@@ -18902,7 +18902,7 @@ const branches = [
     subtitle: "Mandsaur",
     owner: "Er. Rakesh Mali",
     manager: "Govind Gurjar",
-    address: "Nayapura Rd, near Maharana Pratap Bus Stand, ramtekri, Bhatrewas, Mandsaur, Madhya Pradesh 458001",
+    address: "SECOND HOME KITCHEN & RESTAURENT, Behind Girls College, Near Teliya Talab, Bhatrewas, Mandsaur, Madhya Pradesh 458001",
     hours: "Mon-Sun: 11:00 AM – 11:00 PM",
     phone: "9575798248",
     tags: [
@@ -18913,7 +18913,7 @@ const branches = [
       "Celebration Setup",
       "Authentic Flavours"
     ],
-    mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14689.572!2d75.05661!3d24.07194!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39642d35e71f9e11%3A0x3a86a7e55dec4509!2sSECOND%20HOME%20KITCHEN%20%26%20RESTAURENT!5e0!3m2!1sen!2sin!4v1714500000000!5m2!1sen!2sin"
+    mapSrc: "https://www.google.com/maps?q=24.0776175,75.0565854&z=17&output=embed"
   },
   {
     name: "Second Home Neemuch",
