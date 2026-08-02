@@ -668,7 +668,6 @@ function SectionHeading({
 export default function App() {
   const [slideIndex, setSlideIndex] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showPhotosIframe, setShowPhotosIframe] = useState(false);
   const [activeMenuCategory, setActiveMenuCategory] = useState(0);
   const [contactForm, setContactForm] = useState({
     name: "",
@@ -1604,8 +1603,8 @@ export default function App() {
                     Decoration Photos
                   </h3>
                   <p className="font-body text-sm text-muted-foreground leading-relaxed mb-5">
-                    Browse our stunning collection of table decorations, floral
-                    arrangements, and themed setups for all occasions
+                    Discover table decorations, floral arrangements, and themed
+                    setups created for every special occasion
                   </p>
                   {/* Highlighted WhatsApp announcement */}
                   <div className="bg-yellow-400 border-2 border-yellow-600 rounded-xl p-4 mb-4 text-center shadow-md">
@@ -1624,23 +1623,6 @@ export default function App() {
                       </a>
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowPhotosIframe(!showPhotosIframe)}
-                    data-ocid="decoration.view_photos_button"
-                    className="inline-flex items-center gap-2 text-white font-display font-semibold px-7 py-3 rounded-full shadow-green hover:shadow-green-lg transition-smooth hover:scale-105"
-                    style={{ backgroundColor: "#1B4332" }}
-                  >
-                    {showPhotosIframe ? (
-                      <>
-                        <span>🙈</span> Hide Photos
-                      </>
-                    ) : (
-                      <>
-                        <span>🖼️</span> View Photos
-                      </>
-                    )}
-                  </button>
                 </div>
                 {/* Feature tags */}
                 <div className="px-8 py-4 flex flex-wrap gap-2 justify-center">
@@ -1690,8 +1672,8 @@ export default function App() {
                     Setup Videos
                   </h3>
                   <p className="font-body text-sm text-muted-foreground leading-relaxed mb-5">
-                    Watch behind-the-scenes decoration setup videos and get
-                    inspired for your next celebration
+                    Choose a decoration setup for your next celebration and
+                    contact us to reserve it
                   </p>
                   {/* Highlighted setup number announcement */}
                   <div className="bg-orange-400 border-2 border-orange-600 rounded-xl p-4 mb-4 text-center shadow-md">
@@ -1711,19 +1693,6 @@ export default function App() {
                       </a>
                     </p>
                   </div>
-                  <a
-                    href="https://drive.google.com/drive/folders/1UJ007ro6ZVE97LKLf4heyxv9Ym1f0uJ2"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-ocid="decoration.watch_videos_button"
-                    className="inline-flex items-center gap-2 text-white font-display font-semibold px-7 py-3 rounded-full transition-smooth hover:scale-105 shadow-lg"
-                    style={{
-                      backgroundColor: "#D97706",
-                      boxShadow: "0 4px 14px rgba(217,119,6,0.4)",
-                    }}
-                  >
-                    <span>▶️</span> Watch Videos
-                  </a>
                 </div>
                 {/* Feature tags */}
                 <div className="px-8 py-4 flex flex-wrap gap-2 justify-center">
@@ -1748,40 +1717,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Embedded iframe (toggled) */}
-            {showPhotosIframe && (
-              <div
-                className="rounded-2xl overflow-hidden shadow-green-lg border-2"
-                style={{ borderColor: "rgba(27,67,50,0.2)" }}
-              >
-                <div
-                  className="px-6 py-4 flex items-center gap-3"
-                  style={{ backgroundColor: "#1B4332" }}
-                >
-                  <span className="text-white text-lg">📸</span>
-                  <h4 className="font-display text-base font-semibold text-white">
-                    Decoration Photo Gallery
-                  </h4>
-                  <button
-                    type="button"
-                    onClick={() => setShowPhotosIframe(false)}
-                    data-ocid="decoration.close_photos_button"
-                    className="ml-auto text-white/70 hover:text-white transition-smooth text-sm font-body"
-                    aria-label="Close photo gallery"
-                  >
-                    ✕ Close
-                  </button>
-                </div>
-                <iframe
-                  src="https://drive.google.com/file/d/1G_naD_VoU62lkXOehQqaBhdbjCM4zRXB/preview"
-                  width="100%"
-                  height="500"
-                  allow="autoplay"
-                  className="block border-0"
-                  title="Decoration Photos"
-                />
-              </div>
-            )}
           </div>
         </section>
 
