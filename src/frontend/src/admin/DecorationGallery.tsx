@@ -2,6 +2,8 @@ import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 
 const API_URL = "https://smiley-home-decoration-api.onrender.com";
+const OPEN_DECORATION_URL = "https://drive.google.com/file/d/1yrQTuCsDCj_MUC6N3IyPuI_dtbpg5kKb/preview";
+const DECORATION_VIDEO_URL = "https://drive.google.com/drive/folders/1ttnP5_i_GvOTX8LtO2NEdRfhSo4X2ZuC?usp=drive_link";
 
 type Decoration = {
   id: string;
@@ -56,6 +58,24 @@ export default function DecorationGallery() {
 
   return createPortal(
     <div className="px-8 pb-8 pt-2">
+      <div className="mb-5 flex flex-wrap gap-3">
+        <a
+          href={OPEN_DECORATION_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center rounded-full bg-emerald-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800"
+        >
+          Open Decoration
+        </a>
+        <a
+          href={DECORATION_VIDEO_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center rounded-full border border-emerald-900 bg-white px-5 py-2.5 text-sm font-semibold text-emerald-900 shadow-sm transition hover:bg-emerald-50"
+        >
+          Decoration Videos
+        </a>
+      </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {items.map((item, index) => (
           <figure key={item.id} className="overflow-hidden rounded-xl border border-emerald-900/10 bg-white shadow-sm">
