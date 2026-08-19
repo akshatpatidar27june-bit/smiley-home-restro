@@ -54,7 +54,7 @@ export default function DecorationGallery() {
     };
   }, []);
 
-  if (!target || items.length === 0) return null;
+  if (!target) return null;
 
   return createPortal(
     <div className="px-8 pb-8 pt-2">
@@ -65,7 +65,7 @@ export default function DecorationGallery() {
           rel="noopener noreferrer"
           className="inline-flex items-center justify-center rounded-full bg-emerald-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800"
         >
-          Open Decoration
+          🖼️ Open Decoration
         </a>
         <a
           href={DECORATION_VIDEO_URL}
@@ -73,24 +73,26 @@ export default function DecorationGallery() {
           rel="noopener noreferrer"
           className="inline-flex items-center justify-center rounded-full border border-emerald-900 bg-white px-5 py-2.5 text-sm font-semibold text-emerald-900 shadow-sm transition hover:bg-emerald-50"
         >
-          Decoration Videos
+          ▶️ Decoration Videos
         </a>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {items.map((item, index) => (
-          <figure key={item.id} className="overflow-hidden rounded-xl border border-emerald-900/10 bg-white shadow-sm">
-            <img
-              src={`${API_URL}${item.url}`}
-              alt={item.name || `Decoration setup ${index + 1}`}
-              className="aspect-square w-full object-cover"
-              loading="lazy"
-            />
-            <figcaption className="truncate px-3 py-2 text-xs font-semibold text-emerald-950">
-              {item.name || `Setup ${index + 1}`}
-            </figcaption>
-          </figure>
-        ))}
-      </div>
+      {items.length > 0 && (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {items.map((item, index) => (
+            <figure key={item.id} className="overflow-hidden rounded-xl border border-emerald-900/10 bg-white shadow-sm">
+              <img
+                src={`${API_URL}${item.url}`}
+                alt={item.name || `Decoration setup ${index + 1}`}
+                className="aspect-square w-full object-cover"
+                loading="lazy"
+              />
+              <figcaption className="truncate px-3 py-2 text-xs font-semibold text-emerald-950">
+                {item.name || `Setup ${index + 1}`}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
     </div>,
     target,
   );
