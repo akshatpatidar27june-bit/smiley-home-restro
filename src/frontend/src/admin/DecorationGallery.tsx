@@ -1,7 +1,7 @@
 import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 
-const API_URL = (import.meta.env.VITE_DECORATION_API_URL || "").replace(/\/$/, "");
+const API_URL = "https://smiley-home-decoration-api.onrender.com";
 
 type Decoration = {
   id: string;
@@ -35,7 +35,6 @@ export default function DecorationGallery() {
   }, []);
 
   useEffect(() => {
-    if (!API_URL) return;
     let cancelled = false;
     fetch(`${API_URL}/api/decorations`)
       .then(async (response) => {
