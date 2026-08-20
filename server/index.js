@@ -17,7 +17,7 @@ const allowedOrigin = process.env.FRONTEND_ORIGIN || "*";
 const githubToken = process.env.GITHUB_TOKEN;
 const githubRepo = process.env.GITHUB_REPO || "akshatpatidar27june-bit/smiley-home-restro";
 const githubBranch = process.env.GITHUB_BRANCH || "main";
-const githubFolder = (process.env.GITHUB_DECORATION_FOLDER || "public/decorations").replace(/^\\/+|\\/+$/g, "");
+const githubFolder = (process.env.GITHUB_DECORATION_FOLDER || "public/decorations").replace(/^\/+|\/+$/g, "");
 const githubMetadataPath = `${githubFolder}/decorations.json`;
 
 fs.mkdirSync(dataDir, { recursive: true });
@@ -124,7 +124,7 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    cb(null, /^image\\/(jpeg|png|webp|gif|avif)$/.test(file.mimetype));
+    cb(null, /^image\/(jpeg|png|webp|gif|avif)$/.test(file.mimetype));
   },
 });
 
