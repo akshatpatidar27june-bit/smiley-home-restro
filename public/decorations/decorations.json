@@ -41,7 +41,7 @@
   },
   {
     "id": "2cc44c53-7fe2-4712-af66-133507db7c49",
-    "url": "/api/decorations/__ID__/image",
+    "url": "/api/decorations/2cc44c53-7fe2-4712-af66-133507db7c49/image",
     "name": "Baby Shower",
     "createdAt": "2026-08-20T12:39:00.116Z",
     "order": 5,
