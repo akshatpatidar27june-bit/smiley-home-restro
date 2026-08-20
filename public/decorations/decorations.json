@@ -161,7 +161,7 @@
   },
   {
     "id": "a58fc08b-ff64-4ec4-8b8a-3734596053ad",
-    "url": "/api/decorations/__ID__/image",
+    "url": "/api/decorations/a58fc08b-ff64-4ec4-8b8a-3734596053ad/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:43:55.597Z",
     "order": 20,
