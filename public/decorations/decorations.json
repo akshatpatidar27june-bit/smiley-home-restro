@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "id": "f84291d1-2e08-437b-b549-250705be0e23",
+    "url": "/api/decorations/__ID__/image",
+    "name": "BIRTHDAY",
+    "createdAt": "2026-08-20T12:23:58.540Z",
+    "order": 0,
+    "githubPath": "public/decorations/1787228635968-75d1c0a1-f0dc-4372-8e9f-af7feba97b49.png"
+  }
+]
