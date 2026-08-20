@@ -33,7 +33,7 @@
   },
   {
     "id": "c22b5138-ca16-4e1e-9dfb-dcdd82972b42",
-    "url": "/api/decorations/__ID__/image",
+    "url": "/api/decorations/c22b5138-ca16-4e1e-9dfb-dcdd82972b42/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:25:17.601Z",
     "order": 4,
