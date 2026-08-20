@@ -30,5 +30,13 @@
     "createdAt": "2026-08-20T12:25:08.493Z",
     "order": 3,
     "githubPath": "public/decorations/1787228705873-35d91ca8-a2bf-4209-9e01-325aa44a117e.png"
+  },
+  {
+    "id": "c22b5138-ca16-4e1e-9dfb-dcdd82972b42",
+    "url": "/api/decorations/__ID__/image",
+    "name": "BIRTHDAY",
+    "createdAt": "2026-08-20T12:25:17.601Z",
+    "order": 4,
+    "githubPath": "public/decorations/1787228715327-b51b01d6-9d61-40b5-824b-e30efcf59bc5.png"
   }
 ]
