@@ -1,7 +1,7 @@
 [
   {
     "id": "f84291d1-2e08-437b-b549-250705be0e23",
-    "url": "/api/decorations/__ID__/image",
+    "url": "/api/decorations/f84291d1-2e08-437b-b549-250705be0e23/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:23:58.540Z",
     "order": 0,
