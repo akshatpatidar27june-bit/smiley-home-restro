@@ -33,7 +33,7 @@
   },
   {
     "id": "905a2c30-adde-472d-9a53-83d776a53e8d",
-    "url": "/api/decorations/__ID__/image",
+    "url": "/api/decorations/905a2c30-adde-472d-9a53-83d776a53e8d/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:38:40.559Z",
     "order": 4,
