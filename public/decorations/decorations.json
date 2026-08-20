@@ -1,7 +1,7 @@
 [
   {
     "id": "d3cbfb8e-691c-47f0-8244-1b6c1b3ae6ed",
-    "url": "/api/decorations/__ID__/image",
+    "url": "/api/decorations/d3cbfb8e-691c-47f0-8244-1b6c1b3ae6ed/image",
     "name": "ChatGPT Image Aug 18, 2026, 03_26_34 PM.png",
     "createdAt": "2026-08-20T01:54:20.500Z",
     "order": 0,
