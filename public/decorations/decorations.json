@@ -102,5 +102,13 @@
     "createdAt": "2026-08-20T12:41:18.619Z",
     "order": 12,
     "githubPath": "public/decorations/1787229676320-b6643926-ab89-405e-909b-2be9f6592326.png"
+  },
+  {
+    "id": "5c91a512-6607-45d2-9811-6534882e107e",
+    "url": "/api/decorations/__ID__/image",
+    "name": "BIRTHDAY",
+    "createdAt": "2026-08-20T12:41:41.567Z",
+    "order": 13,
+    "githubPath": "public/decorations/1787229698748-05ba0d8f-d096-4ce4-b44a-7c0875f655fb.png"
   }
 ]
