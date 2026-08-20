@@ -152,6 +152,36 @@ app.get("/api/decorations", async (_req, res, next) => {
   }
 });
 
+// Serve stored images directly through Render instead of relying on a public
+// GitHub /public directory or raw.githubusercontent.com access from the browser.
+app.get("/api/decorations/:id/image", async (req, res, next) => {
+  try {
+    const items = await getDecorations();
+    const item = items.find((entry) => entry.id === req.params.id);
+    if (!item?.githubPath) return res.status(404).end();
+
+    const file = await getGithubFile(item.githubPath);
+    if (!file?.content) return res.status(404).end();
+
+    const buffer = Buffer.from(file.content.replace(/\n/g, ""), "base64");
+    const ext = path.extname(item.githubPath).toLowerCase();
+    const mime = {
+      ".jpg": "image/jpeg",
+      ".jpeg": "image/jpeg",
+      ".png": "image/png",
+      ".webp": "image/webp",
+      ".gif": "image/gif",
+      ".avif": "image/avif",
+    }[ext] || "application/octet-stream";
+
+    res.setHeader("Content-Type", mime);
+    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    return res.send(buffer);
+  } catch (error) {
+    return next(error);
+  }
+});
+
 app.post("/api/decorations", (req, res, next) => {
   if (!isAuthorized(req)) return res.status(401).json({ error: "Unauthorized." });
   upload.single("photo")(req, res, async (error) => {
@@ -167,10 +197,9 @@ app.post("/api/decorations", (req, res, next) => {
 
       await putGithubFile(filePath, req.file.buffer, `Add decoration image ${filename}`);
 
-      const rawUrl = `https://raw.githubusercontent.com/${githubRepo}/${githubBranch}/${filePath.split("/").map(encodeURIComponent).join("/")}`;
       const item = {
         id: crypto.randomUUID(),
-        url: rawUrl,
+        url: `/api/decorations/__ID__/image`,
         name: String(req.body?.name || req.file.originalname || "Decoration"),
         createdAt: new Date().toISOString(),
         order: items.length,
@@ -179,6 +208,10 @@ app.post("/api/decorations", (req, res, next) => {
       const updatedItems = [...items, item];
       const metadataFile = await getGithubFile(githubMetadataPath);
       await saveDecorations(updatedItems, metadataFile?.sha || null);
+      item.url = `/api/decorations/${item.id}/image`;
+      const finalItems = updatedItems.map((entry) => entry.id === item.id ? item : entry);
+      const latestMetadata = await getGithubFile(githubMetadataPath);
+      await saveDecorations(finalItems, latestMetadata?.sha || null);
       return res.status(201).json(item);
     } catch (uploadError) {
       return next(uploadError);
