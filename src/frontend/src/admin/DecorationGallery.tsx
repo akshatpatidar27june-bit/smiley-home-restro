@@ -17,6 +17,7 @@ type Decoration = {
 export default function DecorationGallery() {
   const [photosTarget, setPhotosTarget] = useState<HTMLElement | null>(null);
   const [videosTarget, setVideosTarget] = useState<HTMLElement | null>(null);
+  const [galleryTarget, setGalleryTarget] = useState<HTMLElement | null>(null);
   const [items, setItems] = useState<Decoration[]>([]);
 
   useEffect(() => {
@@ -30,9 +31,12 @@ export default function DecorationGallery() {
       const videos = document.querySelector<HTMLElement>(
         '[data-ocid="decoration.videos.card"]',
       );
+      const parent = photos?.parentElement || videos?.parentElement || null;
+
       if (!cancelled) {
         setPhotosTarget(photos);
         setVideosTarget(videos);
+        setGalleryTarget(parent);
       }
       return photos || videos;
     };
@@ -69,35 +73,15 @@ export default function DecorationGallery() {
     <>
       {photosTarget &&
         createPortal(
-          <div className="px-8 pb-10 pt-3">
+          <div className="px-8 pb-3 pt-3">
             <a
               href={OPEN_DECORATION_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="mb-7 inline-flex items-center justify-center rounded-full bg-emerald-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800"
+              className="inline-flex items-center justify-center rounded-full bg-emerald-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800"
             >
               🖼️ Open Decoration
             </a>
-            {items.length > 0 && (
-              <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
-                {items.map((item, index) => (
-                  <figure
-                    key={item.id}
-                    className="overflow-hidden rounded-2xl border border-emerald-900/10 bg-white shadow-md"
-                  >
-                    <img
-                      src={`${API_URL}/api/decorations/${item.id}/image`}
-                      alt={item.name || `Decoration setup ${index + 1}`}
-                      className="block h-auto min-h-[280px] w-full object-cover"
-                      loading="lazy"
-                    />
-                    <figcaption className="truncate px-4 py-3 text-sm font-semibold text-emerald-950">
-                      {item.name || `Setup ${index + 1}`}
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
-            )}
           </div>,
           photosTarget,
         )}
@@ -115,6 +99,42 @@ export default function DecorationGallery() {
             </a>
           </div>,
           videosTarget,
+        )}
+
+      {galleryTarget && items.length > 0 &&
+        createPortal(
+          <div
+            className="col-span-full mt-8 w-full px-6 pb-10 pt-2 sm:px-8"
+            style={{ gridColumn: "1 / -1" }}
+          >
+            <div className="mb-5 text-center">
+              <h3 className="text-2xl font-bold text-emerald-950">
+                Decoration Photos
+              </h3>
+              <p className="mt-1 text-sm text-emerald-950/70">
+                Our latest decoration setups
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((item, index) => (
+                <figure
+                  key={item.id}
+                  className="overflow-hidden rounded-2xl border border-emerald-900/10 bg-white shadow-md"
+                >
+                  <img
+                    src={`${API_URL}/api/decorations/${item.id}/image`}
+                    alt={item.name || `Decoration setup ${index + 1}`}
+                    className="block h-auto max-h-[520px] min-h-[280px] w-full object-cover"
+                    loading="lazy"
+                  />
+                  <figcaption className="truncate px-4 py-3 text-sm font-semibold text-emerald-950">
+                    {item.name || `Setup ${index + 1}`}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>,
+          galleryTarget,
         )}
     </>
   );
