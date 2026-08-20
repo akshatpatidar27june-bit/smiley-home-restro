@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "id": "460eec20-cf5d-4733-af1b-bf7e6c4890da",
+    "url": "/api/decorations/__ID__/image",
+    "name": "ChatGPT Image Aug 17, 2026, 09_23_31 PM.png",
+    "createdAt": "2026-08-20T11:38:36.067Z",
+    "order": 0,
+    "githubPath": "public/decorations/1787225913131-17339f77-9f1f-4b1d-8977-b16dd53fe39f.png"
+  }
+]
