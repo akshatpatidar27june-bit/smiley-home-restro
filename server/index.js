@@ -17,7 +17,7 @@ const allowedOrigin = process.env.FRONTEND_ORIGIN || "*";
 const githubToken = process.env.GITHUB_TOKEN;
 const githubRepo = process.env.GITHUB_REPO || "akshatpatidar27june-bit/smiley-home-restro";
 const githubBranch = process.env.GITHUB_BRANCH || "main";
-const githubFolder = (process.env.GITHUB_DECORATION_FOLDER || "public/decorations").replace(/^\/+|\/+$/g, "");
+const githubFolder = (process.env.GITHUB_DECORATION_FOLDER || "public/decorations").replace(/^\\/+|\\/+$/g, "");
 const githubMetadataPath = `${githubFolder}/decorations.json`;
 
 fs.mkdirSync(dataDir, { recursive: true });
@@ -60,7 +60,7 @@ async function getGithubFile(filePath) {
 async function getDecorations() {
   const file = await getGithubFile(githubMetadataPath);
   if (!file) return [];
-  const decoded = Buffer.from(file.content.replace(/\n/g, ""), "base64").toString("utf8");
+  const decoded = Buffer.from((file.content || "").replace(/\n/g, ""), "base64").toString("utf8");
   try {
     return JSON.parse(decoded);
   } catch {
@@ -124,7 +124,7 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    cb(null, /^image\/(jpeg|png|webp|gif|avif)$/.test(file.mimetype));
+    cb(null, /^image\\/(jpeg|png|webp|gif|avif)$/.test(file.mimetype));
   },
 });
 
@@ -152,8 +152,9 @@ app.get("/api/decorations", async (_req, res, next) => {
   }
 });
 
-// Serve stored images directly through Render instead of relying on a public
-// GitHub /public directory or raw.githubusercontent.com access from the browser.
+// Serve stored images directly through Render. GitHub's Contents API does not
+// include base64 `content` for files larger than 1 MB, so fall back to the
+// public download_url returned by GitHub for larger images.
 app.get("/api/decorations/:id/image", async (req, res, next) => {
   try {
     const items = await getDecorations();
@@ -161,9 +162,8 @@ app.get("/api/decorations/:id/image", async (req, res, next) => {
     if (!item?.githubPath) return res.status(404).end();
 
     const file = await getGithubFile(item.githubPath);
-    if (!file?.content) return res.status(404).end();
+    if (!file) return res.status(404).end();
 
-    const buffer = Buffer.from(file.content.replace(/\n/g, ""), "base64");
     const ext = path.extname(item.githubPath).toLowerCase();
     const mime = {
       ".jpg": "image/jpeg",
@@ -176,7 +176,20 @@ app.get("/api/decorations/:id/image", async (req, res, next) => {
 
     res.setHeader("Content-Type", mime);
     res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
-    return res.send(buffer);
+
+    if (file.content) {
+      const buffer = Buffer.from(file.content.replace(/\n/g, ""), "base64");
+      return res.send(buffer);
+    }
+
+    if (file.download_url) {
+      const imageResponse = await fetch(file.download_url);
+      if (!imageResponse.ok) return res.status(404).end();
+      const arrayBuffer = await imageResponse.arrayBuffer();
+      return res.send(Buffer.from(arrayBuffer));
+    }
+
+    return res.status(404).end();
   } catch (error) {
     return next(error);
   }
