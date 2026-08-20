@@ -1,7 +1,7 @@
 [
   {
     "id": "90a68598-9faf-4a2d-9880-c80e1ce015e6",
-    "url": "/api/decorations/__ID__/image",
+    "url": "/api/decorations/90a68598-9faf-4a2d-9880-c80e1ce015e6/image",
     "name": "timepass",
     "createdAt": "2026-08-20T12:20:49.768Z",
     "order": 0,
