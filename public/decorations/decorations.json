@@ -105,7 +105,7 @@
   },
   {
     "id": "5c91a512-6607-45d2-9811-6534882e107e",
-    "url": "/api/decorations/__ID__/image",
+    "url": "/api/decorations/5c91a512-6607-45d2-9811-6534882e107e/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:41:41.567Z",
     "order": 13,
