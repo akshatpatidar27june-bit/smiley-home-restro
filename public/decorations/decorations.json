@@ -38,5 +38,13 @@
     "createdAt": "2026-08-20T12:38:40.559Z",
     "order": 4,
     "githubPath": "public/decorations/1787229518114-896e7482-4c33-4654-8236-71ede6dabaa8.png"
+  },
+  {
+    "id": "2cc44c53-7fe2-4712-af66-133507db7c49",
+    "url": "/api/decorations/__ID__/image",
+    "name": "Baby Shower",
+    "createdAt": "2026-08-20T12:39:00.116Z",
+    "order": 5,
+    "githubPath": "public/decorations/1787229537973-1158efab-300b-483f-95bc-c7224d85b399.png"
   }
 ]
