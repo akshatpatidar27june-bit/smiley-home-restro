@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import AdminPanel from "./admin/AdminPanel";
 import DecorationGallery from "./admin/DecorationGallery";
+import GalleryLightbox from "./GalleryLightbox";
 import "./index.css";
 
 BigInt.prototype.toJSON = function () {
@@ -25,6 +26,7 @@ function PublicApp() {
       <InternetIdentityProvider>
         <App />
         <DecorationGallery />
+        <GalleryLightbox />
       </InternetIdentityProvider>
     </QueryClientProvider>
   );
