@@ -169,7 +169,7 @@
   },
   {
     "id": "7417879b-b015-40b1-9b3b-1040a1f09d29",
-    "url": "/api/decorations/__ID__/image",
+    "url": "/api/decorations/7417879b-b015-40b1-9b3b-1040a1f09d29/image",
     "name": "Price 4000",
     "createdAt": "2026-08-30T08:17:48.024Z",
     "order": 21,
