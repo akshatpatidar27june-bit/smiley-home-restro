@@ -21,6 +21,8 @@ export default function AdminPanel() {
   const [decorations, setDecorations] = useState<Decoration[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -98,6 +100,54 @@ export default function AdminPanel() {
     }
   }
 
+  function startEditing(item: Decoration) {
+    setEditingId(item.id);
+    setEditingName(item.name);
+    setError("");
+    setMessage("");
+  }
+
+  function cancelEditing() {
+    setEditingId(null);
+    setEditingName("");
+  }
+
+  async function saveName(id: string) {
+    const nextName = editingName.trim();
+    if (!nextName) {
+      setError("Decoration name cannot be empty.");
+      return;
+    }
+    if (nextName.length > 120) {
+      setError("Decoration name must be 120 characters or fewer.");
+      return;
+    }
+
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch(apiUrl(`/api/decorations/${id}`), {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: nextName }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Could not update decoration name.");
+      setDecorations((items) => items.map((item) => item.id === id ? { ...item, name: data.name } : item));
+      setEditingId(null);
+      setEditingName("");
+      setMessage("Decoration text updated successfully.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not update decoration name.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function removePhoto(id: string) {
     if (!window.confirm("Delete this decoration photo?")) return;
     setBusy(true);
@@ -110,6 +160,7 @@ export default function AdminPanel() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Delete failed.");
       setDecorations((items) => items.filter((item) => item.id !== id));
+      if (editingId === id) cancelEditing();
       setMessage("Decoration photo deleted.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Delete failed.");
@@ -212,8 +263,38 @@ export default function AdminPanel() {
                 <article key={item.id} className="rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-sm">
                   <img src={`${API_URL}${item.url}`} alt={item.name} className="w-full aspect-square object-cover" />
                   <div className="p-3">
-                    <p className="font-semibold truncate" title={item.name}>{item.name}</p>
-                    <button onClick={() => removePhoto(item.id)} disabled={busy} className="mt-3 w-full rounded-lg border border-red-200 text-red-600 py-2 text-sm font-semibold disabled:opacity-50">Delete</button>
+                    {editingId === item.id ? (
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-500 mb-1" htmlFor={`edit-decoration-${item.id}`}>Photo text</label>
+                        <input
+                          id={`edit-decoration-${item.id}`}
+                          value={editingName}
+                          onChange={(event) => setEditingName(event.target.value)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                              event.preventDefault();
+                              void saveName(item.id);
+                            }
+                            if (event.key === "Escape") cancelEditing();
+                          }}
+                          maxLength={120}
+                          autoFocus
+                          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-600"
+                        />
+                        <div className="mt-2 grid grid-cols-2 gap-2">
+                          <button onClick={() => void saveName(item.id)} disabled={busy} className="rounded-lg bg-emerald-800 text-white py-2 text-sm font-semibold disabled:opacity-50">Save</button>
+                          <button onClick={cancelEditing} disabled={busy} className="rounded-lg border border-slate-300 text-slate-700 py-2 text-sm font-semibold disabled:opacity-50">Cancel</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="font-semibold truncate" title={item.name}>{item.name}</p>
+                        <div className="mt-3 grid grid-cols-2 gap-2">
+                          <button onClick={() => startEditing(item)} disabled={busy} className="rounded-lg border border-emerald-200 text-emerald-700 py-2 text-sm font-semibold disabled:opacity-50">Edit</button>
+                          <button onClick={() => void removePhoto(item.id)} disabled={busy} className="rounded-lg border border-red-200 text-red-600 py-2 text-sm font-semibold disabled:opacity-50">Delete</button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </article>
               ))}
