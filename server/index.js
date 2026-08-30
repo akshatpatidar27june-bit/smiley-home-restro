@@ -232,6 +232,27 @@ app.post("/api/decorations", (req, res, next) => {
   });
 });
 
+app.patch("/api/decorations/:id", async (req, res, next) => {
+  if (!isAuthorized(req)) return res.status(401).json({ error: "Unauthorized." });
+  try {
+    const name = typeof req.body?.name === "string" ? req.body.name.trim() : "";
+    if (!name) return res.status(400).json({ error: "Decoration name cannot be empty." });
+    if (name.length > 120) return res.status(400).json({ error: "Decoration name must be 120 characters or fewer." });
+
+    const items = await getDecorations();
+    const index = items.findIndex((entry) => entry.id === req.params.id);
+    if (index === -1) return res.status(404).json({ error: "Decoration not found." });
+
+    const updatedItem = { ...items[index], name };
+    const updatedItems = items.map((entry, itemIndex) => itemIndex === index ? updatedItem : entry);
+    const metadataFile = await getGithubFile(githubMetadataPath);
+    await saveDecorations(updatedItems, metadataFile?.sha || null);
+    return res.json(updatedItem);
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.delete("/api/decorations/:id", async (req, res, next) => {
   if (!isAuthorized(req)) return res.status(401).json({ error: "Unauthorized." });
   try {
