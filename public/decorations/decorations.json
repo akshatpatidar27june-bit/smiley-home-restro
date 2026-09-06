@@ -56,19 +56,11 @@
     "githubPath": "public/decorations/1787229553463-c17b6a98-e3ec-44cb-907e-6d9183cd42b4.png"
   },
   {
-    "id": "df34c6e9-14e4-4ee6-81cd-9d240ac3bbe1",
-    "url": "/api/decorations/df34c6e9-14e4-4ee6-81cd-9d240ac3bbe1/image",
-    "name": "BIRTHDAY 2500",
-    "createdAt": "2026-08-20T12:39:30.738Z",
-    "order": 7,
-    "githubPath": "public/decorations/1787229568656-36379b02-3607-4025-a733-7593696c4db8.png"
-  },
-  {
     "id": "08bc8c4b-6c9a-454b-9985-1d99f670bfcf",
     "url": "/api/decorations/08bc8c4b-6c9a-454b-9985-1d99f670bfcf/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:39:48.379Z",
-    "order": 8,
+    "order": 7,
     "githubPath": "public/decorations/1787229586117-ec68ccb3-4f8c-4391-81ec-6684bb94bba7.png"
   },
   {
@@ -76,7 +68,7 @@
     "url": "/api/decorations/0fc94253-6507-48e5-90c8-85f3c8549194/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:40:10.936Z",
-    "order": 9,
+    "order": 8,
     "githubPath": "public/decorations/1787229608650-8e77ca21-d3b7-4ced-a494-152aa126d1f7.png"
   },
   {
@@ -84,7 +76,7 @@
     "url": "/api/decorations/09ee19e6-e418-40c8-ae90-1c08875ee3d0/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:40:30.590Z",
-    "order": 10,
+    "order": 9,
     "githubPath": "public/decorations/1787229628305-51d5543d-2bb6-43e3-bf49-2332b76d58d6.png"
   },
   {
@@ -92,7 +84,7 @@
     "url": "/api/decorations/2bd16c09-154e-4522-9234-c5288325c90e/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:40:58.804Z",
-    "order": 11,
+    "order": 10,
     "githubPath": "public/decorations/1787229652404-adc8b402-8d54-48c8-b610-ceb4fa8309b8.png"
   },
   {
@@ -100,7 +92,7 @@
     "url": "/api/decorations/368799fb-3dd9-4c43-bb78-827dd7aace16/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:41:18.619Z",
-    "order": 12,
+    "order": 11,
     "githubPath": "public/decorations/1787229676320-b6643926-ab89-405e-909b-2be9f6592326.png"
   },
   {
@@ -108,7 +100,7 @@
     "url": "/api/decorations/5c91a512-6607-45d2-9811-6534882e107e/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:41:41.567Z",
-    "order": 13,
+    "order": 12,
     "githubPath": "public/decorations/1787229698748-05ba0d8f-d096-4ce4-b44a-7c0875f655fb.png"
   },
   {
@@ -116,7 +108,7 @@
     "url": "/api/decorations/99674b68-902b-4def-827b-1830fcd080d6/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:41:59.302Z",
-    "order": 14,
+    "order": 13,
     "githubPath": "public/decorations/1787229716954-b00f032d-b225-4b74-8336-37de34a908e8.png"
   },
   {
@@ -124,7 +116,7 @@
     "url": "/api/decorations/c3233ce6-be65-4632-a996-c4f0721a86e0/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:42:30.046Z",
-    "order": 15,
+    "order": 14,
     "githubPath": "public/decorations/1787229747734-de6fe811-030b-459c-b8db-c322a334aec7.png"
   },
   {
@@ -132,7 +124,7 @@
     "url": "/api/decorations/086f6835-8b04-4d5f-999f-1045c7206d3d/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:42:46.951Z",
-    "order": 16,
+    "order": 15,
     "githubPath": "public/decorations/1787229765635-67170d0b-5d91-4c44-b08a-f63e8892af7b.png"
   },
   {
@@ -140,7 +132,7 @@
     "url": "/api/decorations/478f9878-9202-44fe-8a5e-e392c7bd9333/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:43:03.593Z",
-    "order": 17,
+    "order": 16,
     "githubPath": "public/decorations/1787229781604-c5d53d88-2231-44b4-92ce-b997b40719df.png"
   },
   {
@@ -148,7 +140,7 @@
     "url": "/api/decorations/a7d9ee19-ef41-4e71-b498-e96cfe975f55/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:43:19.940Z",
-    "order": 18,
+    "order": 17,
     "githubPath": "public/decorations/1787229797913-c72f980d-6c14-45b2-b2d0-661f272dd994.png"
   },
   {
@@ -156,7 +148,7 @@
     "url": "/api/decorations/d0383e07-981f-47b6-8b0c-04a573a8ff84/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:43:35.981Z",
-    "order": 19,
+    "order": 18,
     "githubPath": "public/decorations/1787229813750-1c367d79-46c8-448f-95fe-a81b976d3a79.png"
   },
   {
@@ -164,7 +156,7 @@
     "url": "/api/decorations/a58fc08b-ff64-4ec4-8b8a-3734596053ad/image",
     "name": "BIRTHDAY",
     "createdAt": "2026-08-20T12:43:55.597Z",
-    "order": 20,
+    "order": 19,
     "githubPath": "public/decorations/1787229833407-173864cc-f231-4488-9df9-9ac1d28d1765.png"
   }
 ]
