@@ -158,5 +158,13 @@
     "createdAt": "2026-08-20T12:43:55.597Z",
     "order": 19,
     "githubPath": "public/decorations/1787229833407-173864cc-f231-4488-9df9-9ac1d28d1765.png"
+  },
+  {
+    "id": "bff9560f-191c-4be1-ab1e-2870b5f1ff9a",
+    "url": "/api/decorations/__ID__/image",
+    "name": "Price 2500",
+    "createdAt": "2026-09-06T13:22:40.953Z",
+    "order": 20,
+    "githubPath": "public/decorations/1788700958545-4e19dfc8-33f2-4e9a-9403-1d20868dc547.png"
   }
 ]
