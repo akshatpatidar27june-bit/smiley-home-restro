@@ -161,7 +161,7 @@
   },
   {
     "id": "bff9560f-191c-4be1-ab1e-2870b5f1ff9a",
-    "url": "/api/decorations/__ID__/image",
+    "url": "/api/decorations/bff9560f-191c-4be1-ab1e-2870b5f1ff9a/image",
     "name": "Price 2500",
     "createdAt": "2026-09-06T13:22:40.953Z",
     "order": 20,
