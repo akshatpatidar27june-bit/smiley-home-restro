@@ -1,67 +1,68 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-const API_URL = (import.meta.env.VITE_DECORATION_API_URL || "").replace(/\/$/, "");
-const TOKEN_KEY = "smiley_home_admin_token";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
+const ADMIN_ENDPOINT = `${SUPABASE_URL}/functions/v1/decoration-admin`;
+const PUBLIC_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 
 type Decoration = {
   id: string;
-  url: string;
   name: string;
-  createdAt: string;
-  order: number;
+  price: number;
+  image_path: string;
+  display_order: number;
+  created_at: string;
 };
 
-function apiUrl(path: string) {
-  return `${API_URL}${path}`;
+function imageUrl(path: string) {
+  if (path.startsWith("legacy:")) {
+    return `https://raw.githubusercontent.com/akshatpatidar27june-bit/smiley-home-restro/main/${path.slice(7)}`;
+  }
+  return `${SUPABASE_URL}/storage/v1/object/public/decorations/${encodeURIComponent(path)}`;
 }
 
 export default function AdminPanel() {
-  const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY) || "");
   const [password, setPassword] = useState("");
+  const [authenticated, setAuthenticated] = useState(false);
   const [decorations, setDecorations] = useState<Decoration[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
+  const [price, setPrice] = useState("0");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
+  const [editingPrice, setEditingPrice] = useState("0");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const isConfigured = useMemo(() => Boolean(API_URL), []);
-
-  async function loadDecorations() {
-    try {
-      const response = await fetch(apiUrl("/api/decorations"));
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Could not load decorations.");
-      setDecorations(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not load decorations.");
-    }
+  async function request(path: string, init: RequestInit = {}) {
+    const response = await fetch(`${ADMIN_ENDPOINT}${path}`, {
+      ...init,
+      headers: {
+        apikey: PUBLIC_KEY,
+        "x-admin-password": password,
+        ...(init.headers || {}),
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Request failed.");
+    return data;
   }
 
-  useEffect(() => {
-    if (isConfigured) void loadDecorations();
-  }, [isConfigured]);
+  async function loadDecorations() {
+    const data = await request("/list");
+    setDecorations(Array.isArray(data) ? data : []);
+  }
 
   async function login(event: React.FormEvent) {
     event.preventDefault();
     setBusy(true);
     setError("");
     try {
-      const response = await fetch(apiUrl("/api/login"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Login failed.");
-      localStorage.setItem(TOKEN_KEY, data.token);
-      setToken(data.token);
-      setPassword("");
-      setMessage("Logged in successfully.");
+      await loadDecorations();
+      setAuthenticated(true);
+      setMessage("Welcome. Your decoration gallery is ready.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed.");
+      setError(err instanceof Error ? err.message : "Incorrect password.");
     } finally {
       setBusy(false);
     }
@@ -69,145 +70,79 @@ export default function AdminPanel() {
 
   async function uploadPhoto(event: React.FormEvent) {
     event.preventDefault();
-    if (!file) {
-      setError("Please select a photo first.");
-      return;
-    }
-    setBusy(true);
-    setError("");
-    setMessage("");
+    if (!file) return setError("Please choose a photo.");
+    setBusy(true); setError(""); setMessage("");
     try {
       const form = new FormData();
       form.append("photo", file);
       form.append("name", name.trim() || file.name);
-      const response = await fetch(apiUrl("/api/decorations"), {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: form,
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Upload failed.");
+      form.append("price", price);
+      const data = await request("/upload", { method: "POST", body: form });
       setDecorations((items) => [...items, data]);
-      setFile(null);
-      setName("");
+      setFile(null); setName(""); setPrice("0");
       const input = document.getElementById("decoration-file") as HTMLInputElement | null;
       if (input) input.value = "";
-      setMessage("Decoration photo added. It is now live on the website.");
+      setMessage("Photo uploaded and published to the website.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
-    } finally {
-      setBusy(false);
-    }
+    } finally { setBusy(false); }
   }
 
   function startEditing(item: Decoration) {
-    setEditingId(item.id);
-    setEditingName(item.name);
-    setError("");
-    setMessage("");
+    setEditingId(item.id); setEditingName(item.name); setEditingPrice(String(item.price ?? 0));
   }
 
-  function cancelEditing() {
-    setEditingId(null);
-    setEditingName("");
-  }
-
-  async function saveName(id: string) {
+  async function saveEdit(id: string) {
     const nextName = editingName.trim();
-    if (!nextName) {
-      setError("Decoration name cannot be empty.");
-      return;
-    }
-    if (nextName.length > 120) {
-      setError("Decoration name must be 120 characters or fewer.");
-      return;
-    }
-
-    setBusy(true);
-    setError("");
-    setMessage("");
+    const nextPrice = Number(editingPrice);
+    if (!nextName) return setError("Decoration name cannot be empty.");
+    if (!Number.isFinite(nextPrice) || nextPrice < 0) return setError("Enter a valid price.");
+    setBusy(true); setError(""); setMessage("");
     try {
-      const response = await fetch(apiUrl(`/api/decorations/${id}`), {
+      const data = await request(`/${id}`, {
         method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: nextName }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: nextName, price: nextPrice }),
       });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Could not update decoration name.");
-      setDecorations((items) => items.map((item) => item.id === id ? { ...item, name: data.name } : item));
-      setEditingId(null);
-      setEditingName("");
-      setMessage("Decoration text updated successfully.");
+      setDecorations((items) => items.map((item) => item.id === id ? data : item));
+      setEditingId(null); setMessage("Name and price updated.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not update decoration name.");
-    } finally {
-      setBusy(false);
-    }
+      setError(err instanceof Error ? err.message : "Update failed.");
+    } finally { setBusy(false); }
   }
 
-  async function removePhoto(id: string) {
-    if (!window.confirm("Delete this decoration photo?")) return;
-    setBusy(true);
-    setError("");
+  async function removePhoto(item: Decoration) {
+    if (!window.confirm(`Delete "${item.name}" from the website?`)) return;
+    setBusy(true); setError(""); setMessage("");
     try {
-      const response = await fetch(apiUrl(`/api/decorations/${id}`), {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Delete failed.");
-      setDecorations((items) => items.filter((item) => item.id !== id));
-      if (editingId === id) cancelEditing();
-      setMessage("Decoration photo deleted.");
+      await request(`/${item.id}`, { method: "DELETE" });
+      setDecorations((items) => items.filter((entry) => entry.id !== item.id));
+      setMessage("Decoration deleted.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Delete failed.");
-    } finally {
-      setBusy(false);
-    }
+    } finally { setBusy(false); }
   }
 
   function logout() {
-    localStorage.removeItem(TOKEN_KEY);
-    setToken("");
-    setMessage("");
+    setAuthenticated(false); setPassword(""); setDecorations([]);
+    setMessage(""); setError(""); setEditingId(null);
   }
 
-  if (!isConfigured) {
-    return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
-        <div className="max-w-lg w-full rounded-2xl bg-white/10 border border-white/10 p-8">
-          <h1 className="text-2xl font-bold mb-3">Smiley Home Admin</h1>
-          <p className="text-white/70">The Render API URL is not configured. Add VITE_DECORATION_API_URL to the frontend deployment.</p>
-        </div>
-      </div>
-    );
+  if (!SUPABASE_URL || !PUBLIC_KEY) {
+    return <div className="min-h-screen bg-slate-950 text-white grid place-items-center p-6"><div className="max-w-lg rounded-2xl bg-white/10 p-8"><h1 className="text-2xl font-bold">Smiley Home Admin</h1><p className="mt-3 text-white/75">Supabase environment variables are not configured for this deployment yet.</p></div></div>;
   }
 
-  if (!token) {
+  if (!authenticated) {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
         <form onSubmit={login} className="w-full max-w-md rounded-2xl bg-white p-8 text-slate-900 shadow-2xl">
-          <div className="mb-7">
-            <p className="text-sm font-semibold text-emerald-700">SMILEY HOME RESTAURANT</p>
-            <h1 className="text-3xl font-bold mt-1">Decoration Admin</h1>
-            <p className="text-slate-500 mt-2">Sign in to manage decoration photos.</p>
-          </div>
-          <label className="block text-sm font-semibold mb-2" htmlFor="admin-password">Admin password</label>
-          <input
-            id="admin-password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-600"
-            autoComplete="current-password"
-          />
+          <p className="text-sm font-semibold text-emerald-700">SMILEY HOME RESTAURANT</p>
+          <h1 className="text-3xl font-bold mt-1">Decoration Admin</h1>
+          <p className="text-slate-500 mt-2 mb-7">Enter your admin password to continue.</p>
+          <label className="block text-sm font-semibold mb-2" htmlFor="admin-password">Password</label>
+          <input id="admin-password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-600" autoComplete="current-password" />
           {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
-          <button disabled={busy} className="w-full mt-5 rounded-xl bg-emerald-800 text-white py-3 font-semibold disabled:opacity-50">
-            {busy ? "Signing in..." : "Sign in"}
-          </button>
+          <button disabled={busy} className="w-full mt-5 rounded-xl bg-emerald-800 text-white py-3 font-semibold disabled:opacity-50">{busy ? "Checking..." : "Sign in"}</button>
         </form>
       </div>
     );
@@ -217,87 +152,40 @@ export default function AdminPanel() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <header className="bg-emerald-950 text-white px-5 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <div>
-            <p className="text-xs tracking-widest text-emerald-200">SMILEY HOME RESTAURANT</p>
-            <h1 className="text-2xl font-bold">Decoration Panel</h1>
-          </div>
+          <div><p className="text-xs tracking-widest text-emerald-200">SMILEY HOME RESTAURANT</p><h1 className="text-2xl font-bold">Decoration Panel</h1></div>
           <button onClick={logout} className="rounded-lg border border-white/20 px-4 py-2 text-sm">Logout</button>
         </div>
       </header>
-
       <main className="max-w-6xl mx-auto p-5 sm:p-8">
         {message && <div className="mb-5 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-emerald-800">{message}</div>}
         {error && <div className="mb-5 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-red-700">{error}</div>}
-
         <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-7 shadow-sm mb-8">
-          <div className="mb-5">
-            <h2 className="text-xl font-bold">Add decoration photo</h2>
-            <p className="text-sm text-slate-500 mt-1">Upload an image and it will automatically appear in the website's Decoration section.</p>
-          </div>
-          <form onSubmit={uploadPhoto} className="grid md:grid-cols-[1fr_220px_auto] gap-4 items-end">
-            <div>
-              <label className="block text-sm font-semibold mb-2" htmlFor="decoration-file">Photo</label>
-              <input id="decoration-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" onChange={(event) => setFile(event.target.files?.[0] || null)} className="w-full rounded-xl border border-slate-300 p-2.5" />
-              <p className="text-xs text-slate-400 mt-1">Maximum 10 MB</p>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-2" htmlFor="decoration-name">Name (optional)</label>
-              <input id="decoration-name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Birthday setup" className="w-full rounded-xl border border-slate-300 px-3 py-3" />
-            </div>
-            <button disabled={busy || !file} className="rounded-xl bg-emerald-800 text-white px-6 py-3 font-semibold disabled:opacity-40">{busy ? "Uploading..." : "Upload Photo"}</button>
+          <h2 className="text-xl font-bold mb-1">Add decoration photo</h2>
+          <p className="text-sm text-slate-500 mb-5">Upload a photo, set its name and price. It will appear on the public website.</p>
+          <form onSubmit={uploadPhoto} className="grid md:grid-cols-[1fr_1fr_160px_auto] gap-4 items-end">
+            <div><label className="block text-sm font-semibold mb-2" htmlFor="decoration-file">Photo</label><input id="decoration-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" onChange={(e) => setFile(e.target.files?.[0] || null)} className="w-full rounded-xl border border-slate-300 p-2.5" /><p className="text-xs text-slate-400 mt-1">Maximum 10 MB</p></div>
+            <div><label className="block text-sm font-semibold mb-2" htmlFor="decoration-name">Decoration name</label><input id="decoration-name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Birthday setup" className="w-full rounded-xl border border-slate-300 px-3 py-3" /></div>
+            <div><label className="block text-sm font-semibold mb-2" htmlFor="decoration-price">Price (₹)</label><input id="decoration-price" type="number" min="0" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full rounded-xl border border-slate-300 px-3 py-3" /></div>
+            <button disabled={busy || !file} className="rounded-xl bg-emerald-800 text-white px-6 py-3 font-semibold disabled:opacity-40">{busy ? "Working..." : "Upload Photo"}</button>
           </form>
         </section>
-
         <section>
-          <div className="flex items-end justify-between mb-4">
-            <div>
-              <h2 className="text-xl font-bold">Live decoration photos</h2>
-              <p className="text-sm text-slate-500">{decorations.length} photo{decorations.length === 1 ? "" : "s"} currently published</p>
-            </div>
-          </div>
-          {decorations.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">No decoration photos uploaded yet.</div>
-          ) : (
+          <div className="mb-4"><h2 className="text-xl font-bold">Live decoration photos</h2><p className="text-sm text-slate-500">{decorations.length} photos published</p></div>
+          {decorations.length === 0 ? <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">No decoration photos yet.</div> : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {decorations.map((item) => (
-                <article key={item.id} className="rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-sm">
-                  <img src={`${API_URL}${item.url}`} alt={item.name} className="w-full aspect-square object-cover" />
-                  <div className="p-3">
-                    {editingId === item.id ? (
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-500 mb-1" htmlFor={`edit-decoration-${item.id}`}>Photo text</label>
-                        <input
-                          id={`edit-decoration-${item.id}`}
-                          value={editingName}
-                          onChange={(event) => setEditingName(event.target.value)}
-                          onKeyDown={(event) => {
-                            if (event.key === "Enter") {
-                              event.preventDefault();
-                              void saveName(item.id);
-                            }
-                            if (event.key === "Escape") cancelEditing();
-                          }}
-                          maxLength={120}
-                          autoFocus
-                          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-600"
-                        />
-                        <div className="mt-2 grid grid-cols-2 gap-2">
-                          <button onClick={() => void saveName(item.id)} disabled={busy} className="rounded-lg bg-emerald-800 text-white py-2 text-sm font-semibold disabled:opacity-50">Save</button>
-                          <button onClick={cancelEditing} disabled={busy} className="rounded-lg border border-slate-300 text-slate-700 py-2 text-sm font-semibold disabled:opacity-50">Cancel</button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <p className="font-semibold truncate" title={item.name}>{item.name}</p>
-                        <div className="mt-3 grid grid-cols-2 gap-2">
-                          <button onClick={() => startEditing(item)} disabled={busy} className="rounded-lg border border-emerald-200 text-emerald-700 py-2 text-sm font-semibold disabled:opacity-50">Edit</button>
-                          <button onClick={() => void removePhoto(item.id)} disabled={busy} className="rounded-lg border border-red-200 text-red-600 py-2 text-sm font-semibold disabled:opacity-50">Delete</button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </article>
-              ))}
+              {decorations.map((item) => <article key={item.id} className="rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-sm">
+                <img src={imageUrl(item.image_path)} alt={item.name} className="w-full aspect-square object-cover" />
+                <div className="p-3">
+                  {editingId === item.id ? <div className="space-y-2">
+                    <label className="block text-xs font-semibold text-slate-500">Decoration name</label><input value={editingName} onChange={(e) => setEditingName(e.target.value)} maxLength={120} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                    <label className="block text-xs font-semibold text-slate-500">Price (₹)</label><input type="number" min="0" step="0.01" value={editingPrice} onChange={(e) => setEditingPrice(e.target.value)} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                    <div className="grid grid-cols-2 gap-2"><button onClick={() => void saveEdit(item.id)} disabled={busy} className="rounded-lg bg-emerald-800 text-white py-2 text-sm font-semibold">Save</button><button onClick={() => setEditingId(null)} disabled={busy} className="rounded-lg border border-slate-300 py-2 text-sm">Cancel</button></div>
+                  </div> : <>
+                    <p className="font-semibold truncate" title={item.name}>{item.name}</p><p className="mt-1 text-sm text-emerald-800 font-bold">₹{Number(item.price || 0).toLocaleString("en-IN")}</p>
+                    <div className="mt-3 grid grid-cols-2 gap-2"><button onClick={() => startEditing(item)} disabled={busy} className="rounded-lg border border-emerald-200 text-emerald-700 py-2 text-sm font-semibold">Edit</button><button onClick={() => void removePhoto(item)} disabled={busy} className="rounded-lg border border-red-200 text-red-600 py-2 text-sm font-semibold">Delete</button></div>
+                  </>}
+                </div>
+              </article>)}
             </div>
           )}
         </section>
